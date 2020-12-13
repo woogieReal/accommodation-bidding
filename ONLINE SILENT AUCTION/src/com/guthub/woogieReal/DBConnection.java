@@ -122,7 +122,7 @@ public class DBConnection {
 
 					}
 					
-				} else System.out.println("input number is smaller than present price.");
+				} else System.out.println("Your input number is smaller than present auction price.");
 
 			}
 		}
