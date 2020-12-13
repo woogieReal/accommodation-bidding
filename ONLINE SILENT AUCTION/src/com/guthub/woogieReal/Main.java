@@ -12,7 +12,12 @@ public class Main {
 		
 		connection.all_accommo();
 		connection.reservation();
+				
+		int no = scan.nextInt();
+		float biddingMoney = scan.nextFloat();
 		
+		connection.bidding(no, biddingMoney);
+		connection.reservation();
 	
 		
 		

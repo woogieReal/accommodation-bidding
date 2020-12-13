@@ -1,12 +1,14 @@
 package com.guthub.woogieReal;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class DBConnection {
 
 	private Connection con;
 	private Statement st;
 	private ResultSet rs;
+	Scanner scan = new Scanner(System.in);
 	
 	public DBConnection() {
 		try
@@ -64,4 +66,86 @@ public class DBConnection {
 			System.out.println("데이터베이스 연결오류" + e.getMessage());
 		}
 	}
+	
+	public float present() {
+		try
+		{
+			System.out.println("please input number you want");
+			int no = scan.nextInt();
+			StringBuilder sb = new StringBuilder();
+			String SQLPresent = sb.append("select present_auction_price from reservation where no = ")
+					.append(no)
+					.toString();
+			rs = st.executeQuery(SQLPresent);
+			while(rs.next()) {
+				return rs.getFloat(1);
+			}
+			
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류" + e.getMessage());
+
+		}
+		return 0.0f;
+
+	}
+	
+	public void bidding(int no, float biddingMoney) {
+
+		try {
+			StringBuilder sb = new StringBuilder();
+			String SQLPresent = sb.append("select present_auction_price from reservation where no = ")
+					.append(no)
+					.toString();
+			rs = st.executeQuery(SQLPresent);
+			
+			while(rs.next()) {
+				
+				if (biddingMoney > rs.getFloat(1)) {
+					
+					try
+					{
+						StringBuilder sb2 = new StringBuilder();
+						String SQLBidding = sb2.append("UPDATE RESERVATION SET PRESENT_AUCTION_PRICE = ")
+								.append(biddingMoney)
+								.append("WHERE NO = ")
+								.append(no)
+								.toString();
+						st.executeUpdate(SQLBidding);
+						System.out.println("Successfully bid");
+						break;
+					}
+					catch (Exception e) 
+					{
+						System.out.println("데이터베이스 연결오류: " + e.getMessage());
+
+					}
+					
+				} else System.out.println("input number is smaller than present price.");
+
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류: "+e.getMessage());
+		}
+		
+	}
+	
+	
+	
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
