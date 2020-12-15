@@ -8,6 +8,7 @@ public class DBConnection {
 	private Connection con;
 	private Statement st;
 	private ResultSet rs;
+	
 	Scanner scan = new Scanner(System.in);
 	
 	public DBConnection() {
@@ -32,14 +33,15 @@ public class DBConnection {
 					.append("(no INT NOT NULL,")
 					.append("room_type VARCHAR(30) NOT NULL,")
 					.append("name VARCHAR(30) NOT NULL,")
-					.append("my_bidding_price FLOAT NOT NULL)")
+					.append("my_bidding_price FLOAT NOT NULL,")
+					.append("winning_bid VARCHAR(10))")
 					.append("DEFAULT CHARACTER SET = utf8")
 					.toString();
 			st.execute(SQLCreateTable);
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류임 : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류 : " + e.getMessage());
 		}
 	}
 	
@@ -160,6 +162,26 @@ public class DBConnection {
 
 	}
 	
+	public float recommended(int no) {
+		try
+		{
+
+			StringBuilder sb = new StringBuilder();
+			String SQLPresent = sb.append("select recommended_retail_price from reservation where no = ")
+					.append(no)
+					.toString();
+			rs = st.executeQuery(SQLPresent);
+			while(rs.next()) {
+				return rs.getFloat(1);
+			}
+			return 0.0f;
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(recommended)" + e.getMessage());
+			return 0.0f;
+		}
+	}
 	public void the_highest_bidder(int no, String memberID) {
 		try
 		{
@@ -183,7 +205,7 @@ public class DBConnection {
 		try
 		{
 			StringBuilder sb = new StringBuilder();
-			String SQLBiddingCheck = sb.append("UPDATE RESERVATION SET BIDDING = NULL WHERE NO = ")
+			String SQLBiddingCheck = sb.append("UPDATE RESERVATION SET THE_HIGHEST_BIDDER = NULL WHERE NO = ")
 					.append(no)
 					.toString();
 			st.executeUpdate(SQLBiddingCheck);
@@ -195,7 +217,7 @@ public class DBConnection {
 		}
 	}
 	
-	public void record(int no, float biddingMoney, String memberID) {
+	public void record(int no, float biddingMoney, String memberID, String strWin) {
 		
 		try
 		{
@@ -216,7 +238,8 @@ public class DBConnection {
 							.append(no+",")
 							.append("'"+roomType+"',")
 							.append("'"+companyName+"',")
-							.append(biddingMoney+")")
+							.append(biddingMoney+",")
+							.append("'"+strWin+"')")
 							.toString();
 					st.executeUpdate(SQLInsert);
 					System.out.println("성공");
@@ -233,43 +256,76 @@ public class DBConnection {
 			System.out.println("데이터베이스 연결오류: " + e.getMessage());
 		}
 	}
-	
 
+	public void winningBid(int no, float biddingMoney, String memberID) {
+		try
+		{
+			String strWin = "won";
+			record(no, biddingMoney, memberID, strWin);
+			StringBuilder sb = new StringBuilder();
+			String SQLWinningBid = sb.append("DELETE FROM RESERVATION WHERE no = ")
+					.append(no)
+					.toString();
+			st.executeUpdate(SQLWinningBid);
+			System.out.println("You won the auction!");
+			
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(winningBid): " + e.getMessage());
+		}
+	}
+	
 	public void bidding(int no, float biddingMoney, String memberID) {
 
 		try {
 			StringBuilder sb = new StringBuilder();
+			
 			String SQLPresent = sb.append("select present_auction_price from reservation where no = ")
 					.append(no)
 					.toString();
+			
 			rs = st.executeQuery(SQLPresent);
+			
 			
 			while(rs.next()) {
 				
-				if (biddingMoney > rs.getFloat(1)) {
+				if (biddingMoney > rs.getFloat(1)) {			
 					
-					try
-					{
-						StringBuilder sb2 = new StringBuilder();
-						String SQLBidding = sb2.append("UPDATE RESERVATION SET PRESENT_AUCTION_PRICE = ")
-								.append(biddingMoney)
-								.append("WHERE NO = ")
-								.append(no)
-								.toString();
-						st.executeUpdate(SQLBidding);
-						the_highest_bidder(no, memberID);
-						record(no, biddingMoney, memberID);
+					if (biddingMoney < recommended(no)) {
+					
+						try
+						{
+							StringBuilder sb2 = new StringBuilder();
+							String SQLBidding = sb2.append("UPDATE RESERVATION SET PRESENT_AUCTION_PRICE = ")
+									.append(biddingMoney)
+									.append("WHERE NO = ")
+									.append(no)
+									.toString();
+							st.executeUpdate(SQLBidding);
+							the_highest_bidder(no, memberID);
+							record(no, biddingMoney, memberID, "");
+							break;
+						}
+						catch (Exception e) 
+						{
+							System.out.println("데이터베이스 연결오류(biddingMoney): " + e.getMessage());
+
+						} 
+						
+					} else if (biddingMoney >= recommended(no)) {
+						
+						winningBid(no, biddingMoney, memberID);
 						break;
-					}
-					catch (Exception e) 
-					{
-						System.out.println("데이터베이스 연결오류(biddingMoney): " + e.getMessage());
-
+						
 					}
 					
-				} else System.out.println("Your input number is smaller than present auction price.");
-
+				} else if(biddingMoney < rs.getFloat(1)) { 
+					System.out.println("Your input number is smaller than present auction price.");
+					break;
+				} 
 			}
+
 		}
 		catch (Exception e)
 		{

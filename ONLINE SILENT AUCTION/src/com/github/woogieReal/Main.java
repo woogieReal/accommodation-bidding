@@ -10,8 +10,11 @@ public class Main {
 		Scanner scan = new Scanner(System.in);
 		DBConnection connection = new DBConnection();
 		
+		System.out.println();
+		System.out.println();
+		
 		//sign up
-		connection.signUp();
+		//connection.signUp();
 		
 		//LogIn
 		System.out.println("Please input your ID");
