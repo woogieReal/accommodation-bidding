@@ -94,6 +94,64 @@ public class DBConnection {
 		
 	}
 	
+	public void userAllRecord(String memberID) {
+		try
+		{
+			StringBuilder sb = new StringBuilder();
+			String SQL = sb.append("SELECT * FROM ")
+					.append(memberID)
+					.toString();
+			
+			rs = st.executeQuery(SQL);
+			System.out.printf("%-4s %-15s\t %-20s\t %-20s %-10s", "no", "room_type", "name", "my_bidding_price", "winning_bid");
+			while(rs.next()) {
+				
+				System.out.println();
+				System.out.printf("%-5s", rs.getString(1));
+				System.out.printf("%-15s\t", rs.getString(2));
+				System.out.printf("%-30s\t", rs.getString(3));
+				System.out.printf("%-15s\t", rs.getString(4));
+				System.out.printf("%-20s\t", rs.getString(5));
+				
+			}
+			System.out.println();
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(userAllRecord): " + e.getMessage());
+		}
+		System.out.println();
+	}
+	
+	public void userWonRecord(String memberID) {
+		try
+		{
+			StringBuilder sb = new StringBuilder();
+			String SQL = sb.append("SELECT * FROM ")
+					.append(memberID)
+					.append(" WHERE winning_bid = 'won'")
+					.toString();
+			
+			rs = st.executeQuery(SQL);
+			System.out.printf("%-4s %-15s\t %-20s\t %-20s %-10s", "no", "room_type", "name", "my_bidding_price", "winning_bid");
+			while(rs.next()) {
+				System.out.println();
+				System.out.printf("%-5s", rs.getString(1));
+				System.out.printf("%-15s\t", rs.getString(2));
+				System.out.printf("%-30s\t", rs.getString(3));
+				System.out.printf("%-15s\t", rs.getString(4));
+				System.out.printf("%-20s\t", rs.getString(5));
+				
+			}
+			System.out.println();
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(userAllRecord): " + e.getMessage());
+		}
+		System.out.println();
+	}
+	
 	public void all_accommo() {
 		try
 		{

@@ -22,7 +22,13 @@ public class Main {
 		System.out.println("Please input your Password");
 		String memberPW = scan.next();
 		connection.logIn(memberID, memberPW);
-
+		
+		//Showing user table;
+		connection.userAllRecord(memberID);
+		
+		//Showing user won record;
+		//connection.userWonRecord(memberID);
+		
 		//Showing All Product
 		System.out.println("Here are some products you can bid now");
 		connection.reservation();
