@@ -240,6 +240,7 @@ public class DBConnection {
 			return 0.0f;
 		}
 	}
+	
 	public void the_highest_bidder(int no, String memberID) {
 		try
 		{
@@ -392,7 +393,6 @@ public class DBConnection {
 		
 	}
 
-	
 }
 
 
