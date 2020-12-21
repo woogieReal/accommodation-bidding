@@ -1,4 +1,4 @@
-package com.github.woogieReal;
+package application;
 
 import java.sql.*;
 import java.util.Scanner;
@@ -20,8 +20,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 DBConnection : " + e.getMessage());
-			e.printStackTrace();
+			System.out.println("데이터베이스 연결오류(DBConnection()) : " + e.getMessage());
 		}
 	}
 	
@@ -42,7 +41,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 createEachTable : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류 : " + e.getMessage());
 		}
 	}
 	
@@ -65,7 +64,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 signUp : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류 : " + e.getMessage());
 		}
 	}
 	
@@ -89,7 +88,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 검색오류 logIn :"+e.getMessage());
+			System.out.println("데이터베이스 검색오류"+e.getMessage());
 
 		}
 		
@@ -119,7 +118,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 userAllRecord : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류(userAllRecord): " + e.getMessage());
 		}
 		System.out.println();
 	}
@@ -148,7 +147,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 userWonRecord : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류(userAllRecord): " + e.getMessage());
 		}
 		System.out.println();
 	}
@@ -169,7 +168,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 all_accommo :" + e.getMessage());
+			System.out.println("데이터베이스 연결오류" + e.getMessage());
 		}
 	}
 	
@@ -193,7 +192,7 @@ public class DBConnection {
 			System.out.println();
 		}
 		catch (Exception e) {
-			System.out.println("데이터베이스 연결오류 reservation :" + e.getMessage());
+			System.out.println("데이터베이스 연결오류" + e.getMessage());
 		}
 	}
 	
@@ -214,7 +213,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 present : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류" + e.getMessage());
 
 		}
 		return 0.0f;
@@ -237,7 +236,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 recommended : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류(recommended)" + e.getMessage());
 			return 0.0f;
 		}
 	}
@@ -257,7 +256,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 the_highest_bidder : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류: " + e.getMessage());
 		}
 	}
 	
@@ -273,7 +272,7 @@ public class DBConnection {
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 biddingCancel : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류: " + e.getMessage());
 		}
 	}
 	
@@ -307,13 +306,13 @@ public class DBConnection {
 				}
 				catch (Exception e)
 				{
-					System.out.println("데이터베이스 연결오류 record : "+e.getMessage());
+					System.out.println("데이터베이스 연결오류(record): "+e.getMessage());
 				}
 			} else {}
 		}
 		catch (Exception e)
 		{
-			System.out.println("데이터베이스 연결오류 record : " + e.getMessage());
+			System.out.println("데이터베이스 연결오류: " + e.getMessage());
 		}
 	}
 
