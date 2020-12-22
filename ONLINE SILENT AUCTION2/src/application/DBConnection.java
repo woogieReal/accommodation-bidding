@@ -1,6 +1,7 @@
 package application;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DBConnection {
@@ -24,6 +25,7 @@ public class DBConnection {
 		}
 	}
 	
+
 	public void createEachTable(String newID) {
 		try
 		{

@@ -14,7 +14,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		Parent root;
 		try {
-			root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+			root = FXMLLoader.load(getClass().getResource("Design.fxml"));
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -26,7 +26,6 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		launch(args);
-		MainController connection = new MainController();
 		
 		
 	}
