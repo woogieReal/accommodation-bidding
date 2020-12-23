@@ -5,23 +5,23 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
 public class MainController {
 
-	private Connection con;
-	private Statement st;
-	private ResultSet rs;
+	Connection con;
+	Statement st;
+	ResultSet rs;
 	
 	//common page
 	@FXML
@@ -34,8 +34,6 @@ public class MainController {
 	//login page
 	@FXML
 	private AnchorPane LoginAnchorPane;
-	@FXML
-	private Label LoginLabel;
 	@FXML
 	private TextField memberID;
 	@FXML
@@ -66,6 +64,36 @@ public class MainController {
 	private AnchorPane SelectAnchorPane;
 	@FXML
 	private Button LogOutButton;
+	@FXML
+	private Button UserOwnPageButton;
+	@FXML
+	private Button BiddingPageButton;
+	
+	//user own page
+	@FXML
+	private AnchorPane UserAnchorPane;
+	@FXML
+	private TableView<Member> userTableView;
+	@FXML
+	private TableColumn<Member, Integer> noColumn;
+	@FXML
+	private TableColumn<Member, String> room_typeColumn;
+	@FXML
+	private TableColumn<Member, String> nameColumn;
+	@FXML
+	private TableColumn<Member, Float> my_bidding_priceColumn;
+	@FXML
+	private TableColumn<Member, String> winning_bidColumn;
+	@FXML
+	private Button BackButtonInUser;
+	@FXML
+	private TextField UserNameTextField;
+	
+//	ObservableList<Member> listM;
+	
+	public void initialize() {
+		
+	}
 	
 	
 	public MainController() {
@@ -109,13 +137,26 @@ public class MainController {
 						.append("'"+memberID.getText()+"'")
 						.toString();
 			rs = st.executeQuery(SQLLogIn);
+			String mem = memberID.getText();
+			
 			if(rs.next()) {
 				if(memberPW.getText().equals(rs.getString(1))){
-					LoginLabel.setText("Welcome!");
 					SelectAnchorPane.setVisible(true);
 					LoginAnchorPane.setVisible(false);
 					memberID.setText("");
 					memberPW.setText("");
+					
+					ObservableList<Member> listM;
+					noColumn.setCellValueFactory(new PropertyValueFactory<Member, Integer>("no"));
+					room_typeColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("room_type"));
+					nameColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("name"));
+					my_bidding_priceColumn.setCellValueFactory(new PropertyValueFactory<Member, Float>("my_bidding_price"));
+					winning_bidColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("winning_bid"));
+					
+					listM = MySQLConnect.getDataMember(mem);
+					userTableView.setItems(listM);;
+					
+					UserNameTextField.setText(mem);
 					
 				} else{
 					AlertTextField.setText("You've entered wrong password.");
@@ -137,6 +178,7 @@ public class MainController {
 		{
 			LoginAnchorPane.setVisible(true);
 			SelectAnchorPane.setVisible(false);
+			UserNameTextField.setText("");
 		} catch (Exception e)
 		{
 			System.out.println("Log out error : "+e.getMessage());
@@ -211,6 +253,26 @@ public class MainController {
 			AlertTextField.setText("");		
 		} catch (Exception e) {
 			System.out.println("cancelAlertButton eroor : "+e.getMessage());
+		}
+	}
+	
+	public void UserOwnPageButton(ActionEvent event) {
+		try
+		{
+			UserAnchorPane.setVisible(true);
+			SelectAnchorPane.setVisible(false);
+		} catch (Exception e) {
+			System.out.println("UserOwnPageButton eroor : "+e.getMessage());
+		}
+	}
+	
+	public void BackButtonInUser(ActionEvent event) {
+		try
+		{
+			SelectAnchorPane.setVisible(true);
+			UserAnchorPane.setVisible(false);
+		} catch (Exception e) {
+			System.out.println("UserOwnPageButton eroor : "+e.getMessage());
 		}
 	}
 	
