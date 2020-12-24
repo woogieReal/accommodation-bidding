@@ -37,12 +37,37 @@ public class MySQLConnect {
 			while (rs.next()) {
 
 				list.add(new Member(Integer.parseInt(rs.getString("no")), rs.getString("room_type"),
-						rs.getString("room_type"), Float.parseFloat(rs.getString("my_bidding_price")),
+						rs.getString("name"), Float.parseFloat(rs.getString("my_bidding_price")),
 						rs.getString("winning_bid")));
 
 			}
 		} catch (Exception e) {
-			System.out.println(member+e.getMessage());
+			System.out.println(member + e.getMessage());
+		}
+
+		return list;
+	}
+
+	public static ObservableList<Reservation> getDataReservation() {
+
+		Connection conn = connectDB();
+		ObservableList<Reservation> list = FXCollections.observableArrayList();
+		try {
+			String SQL = "SELECT * FROM reservation";
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				list.add(new Reservation(Integer.parseInt(rs.getString("no")), rs.getString("room_type"),
+						Integer.parseInt(rs.getString("maximum")), rs.getString("name"),
+						Float.parseFloat(rs.getString("present_auction_price")),
+						Float.parseFloat(rs.getString("recommended_retail_price")),
+						rs.getString("the_highest_bidder")));
+
+			}
+		} catch (Exception e) {
+			System.out.println("Reservation" + e.getMessage());
 		}
 
 		return list;

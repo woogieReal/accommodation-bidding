@@ -89,9 +89,80 @@ public class MainController {
 	@FXML
 	private TextField UserNameTextField;
 	
+	//bidding page
+	@FXML
+	private AnchorPane BiddingAnchorPane;
+	@FXML
+	private TableView<Reservation> BiddingTableView;
+	@FXML
+	private TableColumn<Reservation, Integer> noColumn2;
+	@FXML
+	private TableColumn<Reservation, String> room_typeColumn2;
+	@FXML
+	private TableColumn<Reservation, Integer> maximumColumn;
+	@FXML
+	private TableColumn<Reservation, String> nameColumn2;
+	@FXML
+	private TableColumn<Reservation, Float> present_auction_priceColumn;
+	@FXML
+	private TableColumn<Reservation, Float> recommended_retail_priceColumn;
+	@FXML
+	private TableColumn<Reservation, String> the_highest_bidderColumn;
+	@FXML
+	private Button BackButtonInBidding;
+	@FXML
+	private TextField UserNameTextField2;
+	@FXML
+	private TextField ProductNoTextField;
+	@FXML
+	private TextField HowMuchTextField;
+	@FXML
+	private Button BidButton;
+	
+	
 //	ObservableList<Member> listM;
 	
+	
+	
 	public void initialize() {
+		
+		ObservableList<Reservation> listM2;
+		noColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, Integer>("no"));
+		room_typeColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, String>("room_type"));
+		maximumColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Integer>("maximum"));
+		nameColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, String>("name"));
+		present_auction_priceColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Float>("present_auction_price"));
+		recommended_retail_priceColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Float>("recommended_retail_price"));
+		the_highest_bidderColumn.setCellValueFactory(new PropertyValueFactory<Reservation, String>("the_highest_bidder"));
+		
+		listM2 = MySQLConnect.getDataReservation();
+		BiddingTableView.setItems(listM2);;
+		
+	}
+
+	public void updateTable(String mem) {
+
+		ObservableList<Reservation> listM2;
+		noColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, Integer>("no"));
+		room_typeColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, String>("room_type"));
+		maximumColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Integer>("maximum"));
+		nameColumn2.setCellValueFactory(new PropertyValueFactory<Reservation, String>("name"));
+		present_auction_priceColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Float>("present_auction_price"));
+		recommended_retail_priceColumn.setCellValueFactory(new PropertyValueFactory<Reservation, Float>("recommended_retail_price"));
+		the_highest_bidderColumn.setCellValueFactory(new PropertyValueFactory<Reservation, String>("the_highest_bidder"));
+		
+		listM2 = MySQLConnect.getDataReservation();
+		BiddingTableView.setItems(listM2);;
+		
+		ObservableList<Member> listM;
+		noColumn.setCellValueFactory(new PropertyValueFactory<Member, Integer>("no"));
+		room_typeColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("room_type"));
+		nameColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("name"));
+		my_bidding_priceColumn.setCellValueFactory(new PropertyValueFactory<Member, Float>("my_bidding_price"));
+		winning_bidColumn.setCellValueFactory(new PropertyValueFactory<Member, String>("winning_bid"));
+		
+		listM = MySQLConnect.getDataMember(mem);
+		userTableView.setItems(listM);;
 		
 	}
 	
@@ -157,6 +228,7 @@ public class MainController {
 					userTableView.setItems(listM);;
 					
 					UserNameTextField.setText(mem);
+					UserNameTextField2.setText(mem);
 					
 				} else{
 					AlertTextField.setText("You've entered wrong password.");
@@ -274,6 +346,198 @@ public class MainController {
 		} catch (Exception e) {
 			System.out.println("UserOwnPageButton eroor : "+e.getMessage());
 		}
+	}
+	
+	public void BiddingPageButton(ActionEvent event) {
+		try
+		{
+			BiddingAnchorPane.setVisible(true);
+			SelectAnchorPane.setVisible(false);
+		} catch (Exception e) {
+			System.out.println("BiddingPageButton eroor : "+e.getMessage());
+		}
+	}
+	
+	public void BackButtonInBidding(ActionEvent event) {
+		try
+		{
+			SelectAnchorPane.setVisible(true);
+			BiddingAnchorPane.setVisible(false);
+		} catch (Exception e) {
+			System.out.println("BackButtonInBidding eroor : "+e.getMessage());
+		}
+	}
+	
+public void record(int no, float biddingMoney, String memberID, String strWin) {
+		
+		try
+		{
+			StringBuilder sb = new StringBuilder();
+			String SQLRecord = sb.append("SELECT room_type, name FROM RESERVATION WHERE NO =")
+					.append(no)
+					.toString();
+			rs = st.executeQuery(SQLRecord);
+			if(rs.next()) {
+				String roomType = rs.getString(1);
+				String companyName = rs.getString(2);
+				try
+				{
+					StringBuilder sb2 = new StringBuilder();
+					String SQLInsert = sb2.append("INSERT INTO ")
+							.append(memberID)
+							.append(" VALUES(")
+							.append(no+",")
+							.append("'"+roomType+"',")
+							.append("'"+companyName+"',")
+							.append(biddingMoney+",")
+							.append("'"+strWin+"')")
+							.toString();
+					st.executeUpdate(SQLInsert);
+					System.out.println("성공");
+
+				}
+				catch (Exception e)
+				{
+					System.out.println("데이터베이스 연결오류(record): "+e.getMessage());
+				}
+			} else {}
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류: " + e.getMessage());
+		}
+	}
+	
+	public float recommended(int no) {
+		try
+		{
+
+			StringBuilder sb = new StringBuilder();
+			String SQLPresent = sb.append("select recommended_retail_price from reservation where no = ")
+					.append(no)
+					.toString();
+			rs = st.executeQuery(SQLPresent);
+			while(rs.next()) {
+				return rs.getFloat(1);
+			}
+			return 0.0f;
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(recommended)" + e.getMessage());
+			return 0.0f;
+		}
+	}
+	
+	public void the_highest_bidder(int no, String memberID) {
+		try
+		{
+			StringBuilder sb = new StringBuilder();
+			String SQLBiddingCheck = sb.append("UPDATE RESERVATION SET THE_HIGHEST_BIDDER = ")
+					.append("'"+memberID+"'")
+					.append("WHERE NO = ")
+					.append(no)
+					.toString();
+			st.executeUpdate(SQLBiddingCheck);
+			System.out.println("Successfully bid");
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류: " + e.getMessage());
+		}
+	}
+	
+	public void winningBid(int no, float biddingMoney, String memberID) {
+		try
+		{
+			String strWin = "won";
+			record(no, biddingMoney, memberID, strWin);
+			StringBuilder sb = new StringBuilder();
+			String SQLWinningBid = sb.append("DELETE FROM RESERVATION WHERE no = ")
+					.append(no)
+					.toString();
+			st.executeUpdate(SQLWinningBid);
+			System.out.println("You won the auction!");
+			
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(winningBid): " + e.getMessage());
+		}
+	}
+	
+	public void bidding() {
+
+		try {
+			String productNoStr = ProductNoTextField.getText();
+			int productNo = Integer.parseInt(productNoStr);
+			String howMuchStr = HowMuchTextField.getText();
+			float howMuch = Float.parseFloat(howMuchStr);
+			String user = UserNameTextField2.getText();
+			
+			StringBuilder sb = new StringBuilder();
+			String SQLPresent = sb.append("select present_auction_price from reservation where no = ")
+					.append(productNo)
+					.toString();
+			
+			rs = st.executeQuery(SQLPresent);
+			
+			ProductNoTextField.setText("");
+			HowMuchTextField.setText("");
+			
+			
+			while(rs.next()) {
+				
+				if (howMuch > rs.getFloat(1)) {			
+					
+					if (howMuch < recommended(productNo)) {
+					
+						try
+						{
+							StringBuilder sb2 = new StringBuilder();
+							String SQLBidding = sb2.append("UPDATE RESERVATION SET PRESENT_AUCTION_PRICE = ")
+									.append(howMuch)
+									.append("WHERE NO = ")
+									.append(productNo)
+									.toString();
+							st.executeUpdate(SQLBidding);
+							the_highest_bidder(productNo, user);
+							record(productNo, howMuch, user, "");
+							updateTable(user);
+							AlertTextField.setText("Successfully bid");
+							AlertAnchorPane.setVisible(true);
+							break;
+						}
+						catch (Exception e) 
+						{
+							System.out.println("데이터베이스 연결오류(biddingMoney): " + e.getMessage());
+
+						} 
+						
+					} else if (howMuch >= recommended(productNo)) {
+						
+						winningBid(productNo, howMuch, user);
+						updateTable(user);
+						AlertTextField.setText("You won the auction!");
+						AlertAnchorPane.setVisible(true);
+						break;
+						
+					}
+					
+				} else if(howMuch < rs.getFloat(1)) { 
+					System.out.println("Your input number is smaller than present auction price.");
+					AlertTextField.setText("Your input number is smaller than present auction price.");
+					AlertAnchorPane.setVisible(true);
+					break;
+				} 
+			}
+
+		}
+		catch (Exception e)
+		{
+			System.out.println("데이터베이스 연결오류(biddingMoney2): "+e.getMessage());
+		}
+		
 	}
 	
 }
